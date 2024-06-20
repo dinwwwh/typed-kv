@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "composite": true,
+    "declarationMap": true,
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022"],
+    "types": ["@cloudflare/workers-types"],
+    "module": "ES2022",
+    "skipLibCheck": true,
+    "incremental": true,
+
+    "outDir": "build",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@typed-kv/*": ["./src/*"],
+    },
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true
+  },
+  "include": ["src"],
+  "references": [
+    
+  ]
+}

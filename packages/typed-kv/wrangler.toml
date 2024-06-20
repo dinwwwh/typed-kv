@@ -1,0 +1,8 @@
+name = "typed-kv"
+main = "test/worker.ts"
+compatibility_date = "2024-05-12"
+node_compat = true
+
+[[kv_namespaces]]
+binding = "TEST_KV"
+id = "c7ddbeed57ba4e5ca5ce1dd3f1efdfeb"
