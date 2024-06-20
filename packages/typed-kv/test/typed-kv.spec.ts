@@ -1,5 +1,6 @@
 import { TypedKV } from '@typed-kv/typed-kv'
 import { env } from 'cloudflare:test'
+import { SuperJSON } from 'superjson'
 import { it, expect, expectTypeOf } from 'vitest'
 
 type TestKValue = {
@@ -255,4 +256,43 @@ it('works with prefix', async () => {
   expect(r1).toEqual(value)
   expect(r2).toBeNull()
   expect(r3).toEqual(value)
+})
+
+it('work with superjson', async () => {
+  const normalKV = new TypedKV<{ value: { date: Date; map: Map<string, string> } }>({
+    kvNamespace: env.TEST_KV,
+    prefix: 'normal/',
+  })
+
+  const now = new Date()
+
+  await normalKV.put('test', { date: now, map: new Map() })
+  await normalKV.put('test2', { date: now, map: new Map() })
+
+  const v1 = await normalKV.get('test')
+  const v2 = await normalKV.get('test2')
+
+  expect(JSON.stringify(v1)).toEqual(JSON.stringify({ date: now, map: new Map() }))
+  expect(JSON.stringify(v2)).toEqual(JSON.stringify({ date: now, map: new Map() }))
+
+  const superjsonKV = new TypedKV<{ value: { date: Date; map: Map<string, string> } }>({
+    kvNamespace: env.TEST_KV,
+    prefix: 'superjson/',
+    serializeValue: (value) => {
+      return SuperJSON.stringify(value)
+    },
+    deserializeValue: (value) => {
+      if (value === null) return null
+      return SuperJSON.parse(value)
+    },
+  })
+
+  await superjsonKV.put('test', { date: now, map: new Map() })
+  await superjsonKV.put('test2', { date: now, map: new Map() })
+
+  const v3 = await superjsonKV.get('test')
+  const v4 = await superjsonKV.get('test2')
+
+  expect(SuperJSON.stringify(v3)).toEqual(SuperJSON.stringify({ date: now, map: new Map() }))
+  expect(SuperJSON.stringify(v4)).toEqual(SuperJSON.stringify({ date: now, map: new Map() }))
 })

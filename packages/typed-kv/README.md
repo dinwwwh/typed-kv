@@ -50,6 +50,7 @@ await kv.getWithMetadata('test')
 ```ts
 import { TypedKV } from '@typed-kv/typed-kv'
 import { env } from 'cloudflare:test'
+import { SuperJSON } from 'superjson'
 
 type TestKValue = {
   name?: string
@@ -77,6 +78,17 @@ const kv = new TypedKV<{
   },
   defaultListOptions: {
     // default list options
+  },
+
+  // You can implement many custom logics here
+  // For example migration old data to new data
+  // using SuperJSON instead of JSON for support more types: Date, Map, Set, etc.
+  serializeValue(value) {
+    return SuperJSON.stringify(value)
+  },
+  deserializeValue(value) {
+    if (value === null) return null // You can return default value here or null for using default value feature
+    return SuperJSON.parse(value)
   },
 })
 ```
