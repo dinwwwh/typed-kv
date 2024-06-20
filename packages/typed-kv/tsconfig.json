@@ -16,14 +16,12 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "paths": {
-      "@typed-kv/*": ["./src/*"],
+      "@typed-kv/*": ["./src/*"]
     },
 
     "strict": true,
     "noUncheckedIndexedAccess": true
   },
-  "include": ["src"],
-  "references": [
-    
-  ]
+  "include": ["src", "test"],
+  "references": []
 }

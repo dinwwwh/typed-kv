@@ -2,6 +2,7 @@
   "name": "typed-kv",
   "version": "0.0.0",
   "scripts": {
+    "dev": "wrangler dev",
     "build": "tsc --build && tsc-alias",
     "type:check": "tsc --noEmit"
   },
