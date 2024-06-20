@@ -1,15 +1,29 @@
 {
   "name": "typed-kv",
-  "version": "0.0.0",
+  "version": "0.0.1",
+  "exports": {
+    ".": {
+      "types": "./build/src/index.d.ts",
+      "import": "./build/src/index.js",
+      "default": "./build/src/index.js"
+    }
+  },
+  "files": [
+    "build"
+  ],
   "scripts": {
     "dev": "wrangler dev",
-    "build": "tsc --build && tsc-alias",
-    "type:check": "tsc --noEmit"
+    "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+    "type:check": "tsc --noEmit",
+    "test": "vitest --typecheck"
   },
   "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.4.6",
     "@cloudflare/workers-types": "^4.20240614.0",
     "tsc-alias": "^1.8.10",
+    "type-fest": "^4.20.1",
     "typescript": "^5.4.5",
+    "vitest": "1.5.0",
     "wrangler": "^3.61.0"
   }
 }
