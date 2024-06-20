@@ -24,7 +24,7 @@ export class TypedKV<
         defaultListOptions?: ListOptions
         deserializeValue?: (value: string | null) => T['value'] | null
         serializeValue?: (value: T['value']) => string
-      } & (T['defaultValue'] extends true ? { defaultValue: T['value'] } : {})
+      } & (T['defaultValue'] extends true ? { createDefaultValue: () => FinalValue } : {})
     >,
   ) {}
 
@@ -113,8 +113,8 @@ export class TypedKV<
   }
 
   private handleDefaultValue(value: T['value'] | null): FinalValue {
-    if (value === null && 'defaultValue' in this.c) {
-      return this.c.defaultValue as FinalValue
+    if (value === null && 'createDefaultValue' in this.c) {
+      return this.c.createDefaultValue()
     }
 
     return value as FinalValue

@@ -69,7 +69,8 @@ const kv = new TypedKV<{
   kvNamespace: env.TEST_KV,
   prefix: 'user/', // optional prefix for keys
   memcache: true, // enable memcache
-  defaultValue: { name: 'default', age: 0 }, // must be set when using default value feature
+  createDefaultValue: () => ({ name: 'default', age: 0 }), // must be set when using default value feature
+
   defaultGetOptions: {
     // default get options
   },

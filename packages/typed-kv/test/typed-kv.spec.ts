@@ -62,7 +62,7 @@ it('types are correct for various configurations', async () => {
   // Test case with defaultValue
   const kv3 = new TypedKV<{ value: TestKValue; defaultValue: true }>({
     kvNamespace: env.TEST_KV,
-    defaultValue: { name: 'default', age: 0 },
+    createDefaultValue: () => ({ name: 'default', age: 0 }),
   })
 
   // @ts-expect-error lacking defaultValue property
@@ -73,7 +73,7 @@ it('types are correct for various configurations', async () => {
   new TypedKV<{ value: TestKValue; defaultValue: true }>({
     kvNamespace: env.TEST_KV,
     // @ts-expect-error defaultValue is invalid
-    defaultValue: '',
+    createDefaultValue: '',
   })
 
   new TypedKV<{ value: TestKValue; defaultValue: false }>({
@@ -96,7 +96,7 @@ it('types are correct for various configurations', async () => {
   // Test case with value, metadata, and defaultValue
   const kv4 = new TypedKV<{ value: TestKValue; metadata: Metadata; defaultValue: true }>({
     kvNamespace: env.TEST_KV,
-    defaultValue: { name: 'default', age: 0 },
+    createDefaultValue: () => ({ name: 'default', age: 0 }),
   })
 
   const v4 = await kv4.get('test')
