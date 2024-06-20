@@ -225,3 +225,34 @@ it('works with delete and memcache', async () => {
 
   expect(result).toBeNull()
 })
+
+it('works with prefix', async () => {
+  const kv = new TypedKV<{ value: TestKValue }>({ kvNamespace: env.TEST_KV, prefix: 'prefix/' })
+  const value: TestKValue = { name: 'xin chao', age: 18 }
+
+  await kv.put('test1', value)
+  await kv.put('test2', value)
+  await kv.put('test3', value)
+
+  await kv.delete('test2')
+
+  const result = await kv.list('test')
+
+  expect(result.keys).toEqual([{ name: 'test1' }, { name: 'test3' }])
+
+  const v1 = await kv.get('test1')
+  const v2 = await kv.get('test2')
+  const v3 = await kv.get('test3')
+
+  expect(v1).toEqual(value)
+  expect(v2).toBeNull()
+  expect(v3).toEqual(value)
+
+  const r1 = await env.TEST_KV.get('prefix/test1', { type: 'json' })
+  const r2 = await env.TEST_KV.get('prefix/test2', { type: 'json' })
+  const r3 = await env.TEST_KV.get('prefix/test3', { type: 'json' })
+
+  expect(r1).toEqual(value)
+  expect(r2).toBeNull()
+  expect(r3).toEqual(value)
+})

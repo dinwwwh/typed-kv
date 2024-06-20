@@ -89,16 +89,27 @@ export class TypedKV<
     return this.c.kvNamespace.delete(this.handlePrefix(key))
   }
 
-  list(prefix: string, opt?: ListOptions): Promise<KVNamespaceListResult<T['metadata']>> {
-    return this.c.kvNamespace.list<T['metadata']>({
+  async list(prefix: string, opt?: ListOptions): Promise<KVNamespaceListResult<T['metadata']>> {
+    const r = await this.c.kvNamespace.list<T['metadata']>({
       ...this.c?.defaultListOptions,
       ...opt,
       prefix: this.handlePrefix(prefix),
     })
+
+    r.keys = r.keys.map((k) => ({
+      ...k,
+      name: this.reversePrefix(k.name),
+    }))
+
+    return r
   }
 
   private handlePrefix(key: string): string {
     return this.c?.prefix ? `${this.c.prefix}${key}` : key
+  }
+
+  private reversePrefix(key: string): string {
+    return this.c?.prefix ? key.replace(this.c.prefix, '') : key
   }
 
   private handleDefaultValue(value: T['value'] | null): FinalValue {

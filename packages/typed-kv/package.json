@@ -1,6 +1,7 @@
 {
   "name": "typed-kv",
-  "version": "0.0.2",
+  "description": "TypeScript wrapper for Cloudflare KV",
+  "version": "0.0.3",
   "type": "module",
   "homepage": "https://github.com/dinwwwh/typed-kv",
   "author": {
