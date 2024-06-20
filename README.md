@@ -1,81 +1,98 @@
-# Turborepo starter
+# `typed-kv`
 
-This is an official starter Turborepo.
+`typed-kv` is an npm package that acts as a wrapper for Cloudflare KV with first-class TypeScript support. This package aims to simplify the usage of Cloudflare KV by providing robust TypeScript types, built-in memcache, support for default values, and easy handling of get, put, and list operations with default options and prefix support.
 
-## Using this example
+## Features
 
-Run the following command:
+- **Full TypeScript Support**: Type-safe operations for 100% of use cases.
+- **Built-in Memcache**: Faster and more cost-effective access to frequently used data.
+- **Default Values**: Specify default values for keys that might not exist.
+- **Default Options**: Define default get, put, and list options to reduce redundancy.
+- **Prefix Support**: Easily manage key prefixes to organize your KV namespace.
+
+## Limitations
+
+Currently, `typed-kv` does not support binary types like `ArrayBuffer` and `ReadableStream`, but there are plans to add support for these types in the future.
+
+## Installation
 
 ```sh
-npx create-turbo@latest
+npm install typed-kv
 ```
 
-## What's inside?
+## Usage
 
-This Turborepo includes the following packages/apps:
+### Basic Usage
 
-### Apps and Packages
+```ts
+import { TypedKV } from 'typed-kv'
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+type TestKValue = {
+  name?: string
+  age?: number
+}
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+const kv = new TypedKV<{ value: TestKValue }>({
+  kvNamespace: TEST_KV, // your KV namespace,
+})
 
-### Utilities
+const value: TestKValue = { name: 'xin chao', age: 18 }
 
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
+await kv.put('test', value)
+await kv.get('test')
+await kv.delete('test')
+await kv.list()
+await kv.getWithMetadata('test')
 ```
 
-### Develop
+### Advanced Usage
 
-To develop all apps and packages, run the following command:
+```ts
+import { TypedKV } from '@typed-kv/typed-kv'
+import { env } from 'cloudflare:test'
 
+type TestKValue = {
+  name?: string
+  age?: number
+}
+
+type Metadata = {
+  createdAt: number
+}
+
+const kv = new TypedKV<{
+  value: TestKValue
+  metadata: Metadata
+  defaultValue: true // default value feature
+}>({
+  kvNamespace: env.TEST_KV,
+  prefix: 'user/', // optional prefix for keys
+  memcache: true, // enable memcache
+  defaultValue: { name: 'default', age: 0 }, // must be set when using default value feature
+  defaultGetOptions: {
+    // default get options
+  },
+  defaultPutOptions: {
+    // default put options
+  },
+  defaultListOptions: {
+    // default list options
+  },
+})
 ```
-cd my-turborepo
-pnpm dev
+
+## Testing
+
+You can run the tests using `vitest` to ensure that everything is working correctly:
+
+```sh
+pnpm -w test
 ```
 
-### Remote Caching
+## Contributing
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+Contributions are welcome! Please feel free to submit a pull request or open an issue if you have any suggestions or find any bugs.
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
+## License
 
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
